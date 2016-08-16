@@ -432,7 +432,15 @@ class AbstractHistory:
 
 
 class AbstractContextMenu:
-    def __init__(self, tab, parent=None):
+
+    """Attribute of AbstractTab to manage contextual menu.
+
+    Attributes:
+        _menu: A contextual menu widget.
+
+    """
+
+    def __init__(self, tab):
         super().__init__(parent)
         self._tab = tab
         self._widget = None
@@ -441,34 +449,34 @@ class AbstractContextMenu:
     def _init_widget(self, widget):
         self._widget = widget
 
-    def open_window(self):
+    def open_window(self, win_id=None, target=usertypes.ClickTarget.normal):
         raise NotImplementedError
 
-    def duplicate_window(self):
+    def duplicate_window(self, win_id, target=usertypes.ClickTarget.normal):
         raise NotImplementedError
 
-    def open_tab(self):
+    def open_tab(self, tab_id=None, target=usertypes.ClickTarget.normal):
         raise NotImplementedError
 
-    def duplicate_tab(self):
+    def duplicate_tab(self, tab_id, target=usertypes.ClickTarget.normal):
         raise NotImplementedError
 
-    def copy_link_to_clipboard(self):
+    def copy_link_to_clipboard(self, link):
         raise NotImplementedError
 
-    def copy_image_to_clipboard(self):
+    def copy_image_to_clipboard(self, image):
         raise NotImplementedError
 
-    def copy image_url_to_clipbloard(self):
+    def copy_image_url_to_clipbloard(self, url):
         raise NotImplementedError
 
-    def download_link(self):
+    def download_link(self, link):
         raise NotImplementedError
 
-    def download_page(self):
+    def download_page(self, page):
         raise NotImplementedError
 
-    def bookmark_page(self):
+    def bookmark_page(self, url):
         raise NotImplementedError
 
     def back(self):
@@ -477,19 +485,13 @@ class AbstractContextMenu:
     def forward(self):
         raise NotImplementedError
 
-    def stop_refresh(self):
+    def stop_refresh(self, all=False):
         raise NotImplementedError
 
-    def stop_all_refresh(self):
+    def reload(self, bypass_cache=False):
         raise NotImplementedError
 
-    def reload(self):
-        raise NotImplementedError
-
-    def reload_without_cache(self):
-        raise NotImplementedError
-
-    def move(self):
+    def move(self, win_id=None, tab_id=None):
         raise NotImplementedError
 
     def close(self):
@@ -498,13 +500,13 @@ class AbstractContextMenu:
     def pin(self):
         raise NotImplementedError
 
-    def cut(self):
+    def cut(self, text):
         raise NotImplementedError
 
-    def copy(self):
+    def copy(self, text):
         raise NotImplementedError
 
-    def paste(self):
+    def paste(self, text):
         raise NotImplementedError
 
     def undo(self):
@@ -513,13 +515,13 @@ class AbstractContextMenu:
     def redo(self):
         raise NotImplementedError
 
-    def inspect_element(self):
+    def inspect_element(self, element):
         raise NotImplementedError
 
-    def search(self):
+    def search(self, pattern):
         raise NotImplementedError
 
-    def screenshot(self):
+    def screenshot(self, context):
         raise NotImplementedError
 
     def mute(self):
@@ -617,6 +619,7 @@ class AbstractTab(QWidget):
         self.zoom._widget = widget
         self.search._widget = widget
         self.printing._widget = widget
+        self.menu._init_widget(widget)
         self._install_event_filter()
 
     def _install_event_filter(self):
