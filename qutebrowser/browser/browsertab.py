@@ -23,7 +23,7 @@ import itertools
 
 from PyQt5.QtCore import pyqtSignal, pyqtSlot, QUrl, QObject, QSizeF
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QWidget, QApplication
+from PyQt5.QtWidgets import QWidget, QApplication, QMenu, QAction, QActionGroup
 
 from qutebrowser.keyinput import modeman
 from qutebrowser.config import config
@@ -449,6 +449,90 @@ class AbstractContextMenu:
     def _init_widget(self, widget):
         self._widget = widget
 
+        self._menu = QMenu('Contextual Menu', widget)
+
+        self._menu.addAction('Pin')
+
+        self._menu.addSeparator()
+
+        self._menu.addAction('Search for []'.format(''))
+
+        self._menu.addSeparator()
+
+        self._menu.addAction('Open Link')
+        self._menu.addAction('Open Link in New Tab')
+        self._menu.addAction('Open Link in New Background Tab')
+        self._menu.addAction('Open Link in New Window')
+        self._menu.addAction('Open Link in New Window')
+
+        self._menu.addSeparator()
+
+        self._menu.addAction('Duplicate Tab')
+        self._menu.addAction('Duplicate Window')
+
+        self._menu.addSeparator()
+
+        self._menu.addAction('Close Current Tab')
+        self._menu.addAction('Close Others Tabs')
+        self._menu.addAction('Close Tabs on Left')
+        self._menu.addAction('Close Tabs on Right')
+
+        self.addSeparator()
+
+        self._menu.addAction('Move Current Tab')
+        self._menu.addAction('Detach Current Tab')
+
+        self._menu.addSeparator()
+
+        self._menu.addAction('Copy Link')
+        self._menu.addAction('Copy Image')
+        self._menu.addAction('Copy Image Location')
+        self._menu.addAction('Save Link...')
+        self._menu.addAction('Save Image...')
+
+        self._menu.addSeparator()
+
+        self._menu.addAction('Cut')
+        self._menu.addAction('Copy')
+        self._menu.addAction('Paste')
+
+        self._menu.addSeparator()
+
+        self._menu.addAction('Go Back')
+        self._menu.addAction('Go Forward')
+
+        self._menu.addSeparator()
+
+        self._menu.addAction('Undo')
+        self._menu.addAction('Redo')
+
+        self._menu.addSeparator()
+
+        self._menu.addAction('Reload')
+        self._menu.addAction('Force Reload')
+        self._menu.addAction('Stop')
+        self._menu.addAction('Stop All')
+
+        self._menu.addSeparator()
+
+        self._menu.addAction('Save Page')
+        self._menu.addAction('Save Page as...')
+
+        self._menu.addSeparator()
+
+        self._menu.addAction('Bookmark Link')
+        self._menu.addAction('Bookmark Page')
+
+        self._menu.addSeparator()
+
+        self._menu.addAction('Mute')
+        self._menu.addAction('Print')
+        self._menu.addAction('Screenshot')
+
+        self._menu.addSeparator()
+
+        self._menu.addAction('Inspect Element')
+
     def open_window(self, win_id=None, target=usertypes.ClickTarget.normal):
         raise NotImplementedError
 
@@ -461,19 +545,19 @@ class AbstractContextMenu:
     def duplicate_tab(self, tab_id, target=usertypes.ClickTarget.normal):
         raise NotImplementedError
 
-    def copy_link_to_clipboard(self, link):
+    def copy_link(self, link):
         raise NotImplementedError
 
-    def copy_image_to_clipboard(self, image):
+    def copy_image(self, image):
         raise NotImplementedError
 
-    def copy_image_url_to_clipbloard(self, url):
+    def copy_image_link(self, url):
         raise NotImplementedError
 
-    def download_link(self, link):
+    def save_link(self, link):
         raise NotImplementedError
 
-    def download_page(self, page):
+    def save_page(self, page):
         raise NotImplementedError
 
     def bookmark_page(self, url):
@@ -485,7 +569,7 @@ class AbstractContextMenu:
     def forward(self):
         raise NotImplementedError
 
-    def stop_refresh(self, all=False):
+    def stop(self, all=False):
         raise NotImplementedError
 
     def reload(self, bypass_cache=False):
@@ -494,7 +578,7 @@ class AbstractContextMenu:
     def move(self, win_id=None, tab_id=None):
         raise NotImplementedError
 
-    def close(self):
+    def close(self, win_id=None, tab_id=None):
         raise NotImplementedError
 
     def pin(self):
@@ -515,7 +599,7 @@ class AbstractContextMenu:
     def redo(self):
         raise NotImplementedError
 
-    def inspect_element(self, element):
+    def inspect(self, element):
         raise NotImplementedError
 
     def search(self, pattern):
