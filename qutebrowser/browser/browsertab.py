@@ -431,6 +431,104 @@ class AbstractHistory:
         raise NotImplementedError
 
 
+class AbstractContextMenu:
+    def __init__(self, tab, parent=None):
+        super().__init__(parent)
+        self._tab = tab
+        self._widget = None
+        self._menu = None
+
+    def _init_widget(self, widget):
+        self._widget = widget
+
+    def open_window(self):
+        raise NotImplementedError
+
+    def duplicate_window(self):
+        raise NotImplementedError
+
+    def open_tab(self):
+        raise NotImplementedError
+
+    def duplicate_tab(self):
+        raise NotImplementedError
+
+    def copy_link_to_clipboard(self):
+        raise NotImplementedError
+
+    def copy_image_to_clipboard(self):
+        raise NotImplementedError
+
+    def copy image_url_to_clipbloard(self):
+        raise NotImplementedError
+
+    def download_link(self):
+        raise NotImplementedError
+
+    def download_page(self):
+        raise NotImplementedError
+
+    def bookmark_page(self):
+        raise NotImplementedError
+
+    def back(self):
+        raise NotImplementedError
+
+    def forward(self):
+        raise NotImplementedError
+
+    def stop_refresh(self):
+        raise NotImplementedError
+
+    def stop_all_refresh(self):
+        raise NotImplementedError
+
+    def reload(self):
+        raise NotImplementedError
+
+    def reload_without_cache(self):
+        raise NotImplementedError
+
+    def move(self):
+        raise NotImplementedError
+
+    def close(self):
+        raise NotImplementedError
+
+    def pin(self):
+        raise NotImplementedError
+
+    def cut(self):
+        raise NotImplementedError
+
+    def copy(self):
+        raise NotImplementedError
+
+    def paste(self):
+        raise NotImplementedError
+
+    def undo(self):
+        raise NotImplementedError
+
+    def redo(self):
+        raise NotImplementedError
+
+    def inspect_element(self):
+        raise NotImplementedError
+
+    def search(self):
+        raise NotImplementedError
+
+    def screenshot(self):
+        raise NotImplementedError
+
+    def mute(self):
+        raise NotImplementedError
+
+    def print(self):
+        raise NotImplementedError
+
+
 class AbstractTab(QWidget):
 
     """A wrapper over the given widget to hide its API and expose another one.
