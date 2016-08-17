@@ -2,6 +2,7 @@ __pycache__
 *.py~
 *.pyc
 *.swp
+.local.vimrc
 /build
 /dist
 /qutebrowser.egg-info
