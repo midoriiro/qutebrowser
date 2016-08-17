@@ -23,14 +23,14 @@ import itertools
 
 from PyQt5.QtCore import pyqtSignal, pyqtSlot, QUrl, QObject, QSizeF
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QWidget, QApplication, QMenu, QAction, QActionGroup
+from PyQt5.QtWidgets import QWidget, QApplication
 
 from qutebrowser.keyinput import modeman
 from qutebrowser.config import config
 from qutebrowser.utils import (utils, objreg, usertypes, message, log, qtutils,
                                urlutils)
 from qutebrowser.misc import miscwidgets
-from qutebrowser.browser import mouse, hints
+from qutebrowser.browser import mouse, hints, contextmenu
 
 
 tab_id_gen = itertools.count(0)
@@ -436,7 +436,8 @@ class AbstractContextMenu:
     """Attribute of AbstractTab to manage contextual menu.
 
     Attributes:
-        _menu: A contextual menu widget.
+        _widget: The underlying WebView widget.
+        _manager: A manager for contextual menu.
 
     """
 
@@ -444,268 +445,11 @@ class AbstractContextMenu:
         super().__init__()
         self._tab = tab
         self._widget = None
-        self._menu = None
+        self._manager = contextmenu.ContextMenu()
 
     def _init_widget(self, widget):
         self._widget = widget
-
-        self._menu = {
-            'contextual_menu': QMenu(widget),
-            'actions': {
-                'common': {
-                    'pin': {
-                        'text': 'Pin',
-                        'icon': None,
-                        'checkable': True,
-                        'checked': False,
-                    },
-                    'mute': {
-                        'text': 'Mute',
-                        'icon': None,
-                        'checkable': True,
-                        'checked': False,
-                    },
-                    'print': {
-                        'text': 'Print',
-                        'icon': None,
-                    },
-                    'screenshot': {
-                        'text': 'Screenshot',
-                        'icon': None,
-                        'trigger': 'loadStatus'
-                    },
-                },
-                'search': {
-                    'for': {
-                        'text': 'Search for {}',
-                        'icon': None,
-                        'trigger': 'hasSelection',
-                    },
-                },
-                'open': {
-                    'current': {
-                        'text': 'Open Link',
-                        'icon': None,
-                        'trigger': 'hasLink',
-                    },
-                    'tab': {
-                        'text': 'Open Link in New Tab',
-                        'icon': None,
-                        'trigger': 'hasLink',
-                    },
-                    'tab_background': {
-                        'text': 'Open Link in New Background Tab',
-                        'icon': None,
-                        'trigger': 'hasLink',
-                    },
-                    'window': {
-                        'text': 'Open Link in New Window',
-                        'icon': None,
-                        'trigger': 'hasLink',
-                    },
-                    'window_background': {
-                        'text': 'Open Link in New Background Window',
-                        'icon': None,
-                        'trigger': 'hasLink',
-                    }
-                },
-                'duplicate': {
-                    'tab': {
-                        'text': 'Duplicate Tab',
-                        'icon': None,
-                    },
-                    'tab_background': {
-                        'text': 'Duplicate Tab in Background',
-                        'icon': None,
-                    },
-                    'window': {
-                        'text': 'Duplicate Window',
-                        'icon': None,
-                    },
-                    'window_background': {
-                        'text': 'Duplicate Window in Background',
-                        'icon': None,
-                    }
-                },
-                'close': {
-                    'current': {
-                        'text': 'Close',
-                        'icon': None,
-                    },
-                    'similar': {
-                        'text': 'Close Similar Tabs',
-                        'icon': None,
-                        'trigger': 'hasTabs'
-                    },
-                    'other': {
-                        'text': 'Close Other Tabs',
-                        'icon': None,
-                        'trigger': 'hasTabs'
-                    },
-                    'left': {
-                        'text': 'Close Left Tabs',
-                        'icon': None,
-                        'trigger': 'hasTabs'
-                    },
-                    'right': {
-                        'text': 'Close Right Tabs',
-                        'icon': None,
-                        'trigger': 'hasTabs'
-                    }
-                },
-                'move': {
-                    'to_first': {
-                        'text': 'Move to First',
-                        'icon': None,
-                        'trigger': 'hasTabs'
-                    },
-                    'to_last': {
-                        'text': 'Move to Last',
-                        'icon': None,
-                        'trigger': 'hasTabs'
-                    },
-                    'to_left': {
-                        'text': 'Move to Left',
-                        'icon': None,
-                        'trigger': 'hasTabs'
-                    },
-                    'to_right': {
-                        'text': 'Move to Right',
-                        'icon': None,
-                        'trigger': 'hasTabs'
-                    },
-                    'to': {
-                        'text': 'Move to',
-                        'icon': None  # TODO menu
-                    }
-                },
-                'link': {
-                    'copy_link': {
-                        'text': 'Copy Link',
-                        'icon': None,
-                        'trigger': 'hasLink'
-                    },
-                    'copy_image': {
-                        'text': 'Copy Image',
-                        'icon': None,
-                        'trigger': 'hasLink'
-                    },
-                    'copy_image_link': {
-                        'text': 'Copy Image Link',
-                        'icon': None,
-                        'trigger': 'hasLink'
-                    },
-                    'save_link': {
-                        'text': 'Save Link...',
-                        'icon': None,
-                        'trigger': 'hasLink'
-                    },
-                    'save_image': {
-                        'text': 'Save Image...',
-                        'icon': None,
-                        'trigger': 'hasLink'
-                    }
-                },
-                'clipboard': {
-                    'cut': {
-                        'text': 'Cut',
-                        'icon': None,
-                        'trigger': 'hasSelection'
-                    },
-                    'copy': {
-                        'text': 'Copy',
-                        'icon': None,
-                        'trigger': 'hasSelection'
-                    },
-                    'paste': {
-                        'text': 'Paste',
-                        'icon': None,
-                        'trigger': 'hasSelection|canPaste'
-                    }
-                },
-                'history': {
-                    'back': {
-                        'text': 'Go Back',
-                        'icon': None,
-                        'trigger': 'canGoBack'
-                    },
-                    'forward': {
-                        'text': 'Go Forward',
-                        'icon': None,
-                        'trigger': 'canGoForward'
-                    },
-                    'to': {
-                        'text': 'Go to',
-                        'icon': None,
-                        'trigger': 'canGoTo'
-                    }
-                },
-                'stack': {
-                    'undo': {
-                        'text': 'Undo',
-                        'icon': None,
-                        'trigger': 'canUndo'
-                    },
-                    'redo': {
-                        'text': 'Redo',
-                        'icon': None,
-                        'trigger': 'canRedo'
-                    },
-                },
-                'loading': {
-                    'reload': {
-                        'text': 'Reload',
-                        'icon': None,
-                        'trigger': 'loadStatus'
-                    },
-                    'redo': {
-                        'text': 'Force Reload',
-                        'icon': None,
-                        'trigger': 'loadStatus'
-                    },
-                    'undo': {
-                        'text': 'Stop',
-                        'icon': None,
-                        'trigger': 'loadStatus'
-                    },
-                    'redo': {
-                        'text': 'Stop All',
-                        'icon': None,
-                        'trigger': 'loadStatus'
-                    }
-                },
-                'page': {
-                    'save': {
-                        'text': 'Save Page',
-                        'icon': None,
-                        'trigger': 'loadStatus'
-                    },
-                    'save_as': {
-                        'text': 'Save Page as...',
-                        'icon': None,
-                        'trigger': 'loadStatus'
-                    }
-                },
-                'bookmark': {
-                    'link': {
-                        'text': 'Bookmark Link',
-                        'icon': None,
-                        'trigger': 'hasLink'
-                    },
-                    'page': {
-                        'text': 'Bookmark Page',
-                        'icon': None
-                    }
-                },
-                'extra': {
-                    'inspect': {
-                        'text': 'Inspect Element',
-                        'icon': None,
-                        'trigger': 'hasExtraEnabled'
-                    }
-                }
-            }
-        }
+        self._manager._init_menu(widget)
 
     def common(self, method=None):
         raise NotImplementedError
