@@ -495,85 +495,43 @@ class WebKitContextMenu(browsertab.AbstractContextMenu):
 
     """QtWebKit implementations related to contextual menu."""
 
-    def open_window(self, win_id=None, target=usertypes.ClickTarget.normal):
+    def common(self, method=None):
         pass
 
-    def duplicate_window(self, win_id, target=usertypes.ClickTarget.normal):
+    def open(self, method=None):
         pass
 
-    def open_tab(self, tab_id=None, target=usertypes.ClickTarget.normal):
+    def duplicate(self, method=None):
         pass
 
-    def duplicate_tab(self, tab_id, target=usertypes.ClickTarget.normal):
+    def close(self, method=None):
         pass
 
-    def copy_link(self, link):
+    def move(self, method=None):
         pass
 
-    def copy_image(self, image):
+    def link(self, method=None):
         pass
 
-    def copy_image_link(self, url):
+    def clipboard(self, method=None):
         pass
 
-    def save_link(self, link):
+    def history(self, method=None):
         pass
 
-    def save_page(self, page):
+    def stack(self, method=None):
         pass
 
-    def bookmark_page(self, url):
+    def loading(self, method=None):
         pass
 
-    def back(self):
+    def page(self, method=None):
         pass
 
-    def forward(self):
+    def bookmark(self, method=None):
         pass
 
-    def stop(self, all=False):
-        pass
-
-    def reload(self, bypass_cache=False):
-        pass
-
-    def move(self, win_id=None, tab_id=None):
-        pass
-
-    def close(self, win_id=None, tab_id=None):
-        pass
-
-    def pin(self):
-        pass
-
-    def cut(self, text):
-        pass
-
-    def copy(self, text):
-        pass
-
-    def paste(self, text):
-        pass
-
-    def undo(self):
-        pass
-
-    def redo(self):
-        pass
-
-    def inspect(self, element):
-        pass
-
-    def search(self, pattern):
-        pass
-
-    def screenshot(self, context):
-        pass
-
-    def mute(self):
-        pass
-
-    def print(self):
+    def extra(self, method=None):
         pass
 
 

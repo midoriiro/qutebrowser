@@ -441,7 +441,7 @@ class AbstractContextMenu:
     """
 
     def __init__(self, tab):
-        super().__init__(parent)
+        super().__init__()
         self._tab = tab
         self._widget = None
         self._menu = None
@@ -449,169 +449,301 @@ class AbstractContextMenu:
     def _init_widget(self, widget):
         self._widget = widget
 
-        self._menu = QMenu('Contextual Menu', widget)
+        self._menu = {
+            'contextual_menu': QMenu(widget),
+            'actions': {
+                'common': {
+                    'pin': {
+                        'text': 'Pin',
+                        'icon': None,
+                        'checkable': True,
+                        'checked': False,
+                    },
+                    'mute': {
+                        'text': 'Mute',
+                        'icon': None,
+                        'checkable': True,
+                        'checked': False,
+                    },
+                    'print': {
+                        'text': 'Print',
+                        'icon': None,
+                    },
+                    'screenshot': {
+                        'text': 'Screenshot',
+                        'icon': None,
+                        'trigger': 'loadStatus'
+                    },
+                },
+                'search': {
+                    'for': {
+                        'text': 'Search for {}',
+                        'icon': None,
+                        'trigger': 'hasSelection',
+                    },
+                },
+                'open': {
+                    'current': {
+                        'text': 'Open Link',
+                        'icon': None,
+                        'trigger': 'hasLink',
+                    },
+                    'tab': {
+                        'text': 'Open Link in New Tab',
+                        'icon': None,
+                        'trigger': 'hasLink',
+                    },
+                    'tab_background': {
+                        'text': 'Open Link in New Background Tab',
+                        'icon': None,
+                        'trigger': 'hasLink',
+                    },
+                    'window': {
+                        'text': 'Open Link in New Window',
+                        'icon': None,
+                        'trigger': 'hasLink',
+                    },
+                    'window_background': {
+                        'text': 'Open Link in New Background Window',
+                        'icon': None,
+                        'trigger': 'hasLink',
+                    }
+                },
+                'duplicate': {
+                    'tab': {
+                        'text': 'Duplicate Tab',
+                        'icon': None,
+                    },
+                    'tab_background': {
+                        'text': 'Duplicate Tab in Background',
+                        'icon': None,
+                    },
+                    'window': {
+                        'text': 'Duplicate Window',
+                        'icon': None,
+                    },
+                    'window_background': {
+                        'text': 'Duplicate Window in Background',
+                        'icon': None,
+                    }
+                },
+                'close': {
+                    'current': {
+                        'text': 'Close',
+                        'icon': None,
+                    },
+                    'similar': {
+                        'text': 'Close Similar Tabs',
+                        'icon': None,
+                        'trigger': 'hasTabs'
+                    },
+                    'other': {
+                        'text': 'Close Other Tabs',
+                        'icon': None,
+                        'trigger': 'hasTabs'
+                    },
+                    'left': {
+                        'text': 'Close Left Tabs',
+                        'icon': None,
+                        'trigger': 'hasTabs'
+                    },
+                    'right': {
+                        'text': 'Close Right Tabs',
+                        'icon': None,
+                        'trigger': 'hasTabs'
+                    }
+                },
+                'move': {
+                    'to_first': {
+                        'text': 'Move to First',
+                        'icon': None,
+                        'trigger': 'hasTabs'
+                    },
+                    'to_last': {
+                        'text': 'Move to Last',
+                        'icon': None,
+                        'trigger': 'hasTabs'
+                    },
+                    'to_left': {
+                        'text': 'Move to Left',
+                        'icon': None,
+                        'trigger': 'hasTabs'
+                    },
+                    'to_right': {
+                        'text': 'Move to Right',
+                        'icon': None,
+                        'trigger': 'hasTabs'
+                    },
+                    'to': {
+                        'text': 'Move to',
+                        'icon': None  # TODO menu
+                    }
+                },
+                'link': {
+                    'copy_link': {
+                        'text': 'Copy Link',
+                        'icon': None,
+                        'trigger': 'hasLink'
+                    },
+                    'copy_image': {
+                        'text': 'Copy Image',
+                        'icon': None,
+                        'trigger': 'hasLink'
+                    },
+                    'copy_image_link': {
+                        'text': 'Copy Image Link',
+                        'icon': None,
+                        'trigger': 'hasLink'
+                    },
+                    'save_link': {
+                        'text': 'Save Link...',
+                        'icon': None,
+                        'trigger': 'hasLink'
+                    },
+                    'save_image': {
+                        'text': 'Save Image...',
+                        'icon': None,
+                        'trigger': 'hasLink'
+                    }
+                },
+                'clipboard': {
+                    'cut': {
+                        'text': 'Cut',
+                        'icon': None,
+                        'trigger': 'hasSelection'
+                    },
+                    'copy': {
+                        'text': 'Copy',
+                        'icon': None,
+                        'trigger': 'hasSelection'
+                    },
+                    'paste': {
+                        'text': 'Paste',
+                        'icon': None,
+                        'trigger': 'hasSelection|canPaste'
+                    }
+                },
+                'history': {
+                    'back': {
+                        'text': 'Go Back',
+                        'icon': None,
+                        'trigger': 'canGoBack'
+                    },
+                    'forward': {
+                        'text': 'Go Forward',
+                        'icon': None,
+                        'trigger': 'canGoForward'
+                    },
+                    'to': {
+                        'text': 'Go to',
+                        'icon': None,
+                        'trigger': 'canGoTo'
+                    }
+                },
+                'stack': {
+                    'undo': {
+                        'text': 'Undo',
+                        'icon': None,
+                        'trigger': 'canUndo'
+                    },
+                    'redo': {
+                        'text': 'Redo',
+                        'icon': None,
+                        'trigger': 'canRedo'
+                    },
+                },
+                'loading': {
+                    'reload': {
+                        'text': 'Reload',
+                        'icon': None,
+                        'trigger': 'loadStatus'
+                    },
+                    'redo': {
+                        'text': 'Force Reload',
+                        'icon': None,
+                        'trigger': 'loadStatus'
+                    },
+                    'undo': {
+                        'text': 'Stop',
+                        'icon': None,
+                        'trigger': 'loadStatus'
+                    },
+                    'redo': {
+                        'text': 'Stop All',
+                        'icon': None,
+                        'trigger': 'loadStatus'
+                    }
+                },
+                'page': {
+                    'save': {
+                        'text': 'Save Page',
+                        'icon': None,
+                        'trigger': 'loadStatus'
+                    },
+                    'save_as': {
+                        'text': 'Save Page as...',
+                        'icon': None,
+                        'trigger': 'loadStatus'
+                    }
+                },
+                'bookmark': {
+                    'link': {
+                        'text': 'Bookmark Link',
+                        'icon': None,
+                        'trigger': 'hasLink'
+                    },
+                    'page': {
+                        'text': 'Bookmark Page',
+                        'icon': None
+                    }
+                },
+                'extra': {
+                    'inspect': {
+                        'text': 'Inspect Element',
+                        'icon': None,
+                        'trigger': 'hasExtraEnabled'
+                    }
+                }
+            }
+        }
 
-        self._menu.addAction('Pin')
-
-        self._menu.addSeparator()
-
-        self._menu.addAction('Search for []'.format(''))
-
-        self._menu.addSeparator()
-
-        self._menu.addAction('Open Link')
-        self._menu.addAction('Open Link in New Tab')
-        self._menu.addAction('Open Link in New Background Tab')
-        self._menu.addAction('Open Link in New Window')
-        self._menu.addAction('Open Link in New Window')
-
-        self._menu.addSeparator()
-
-        self._menu.addAction('Duplicate Tab')
-        self._menu.addAction('Duplicate Window')
-
-        self._menu.addSeparator()
-
-        self._menu.addAction('Close Current Tab')
-        self._menu.addAction('Close Others Tabs')
-        self._menu.addAction('Close Tabs on Left')
-        self._menu.addAction('Close Tabs on Right')
-
-        self.addSeparator()
-
-        self._menu.addAction('Move Current Tab')
-        self._menu.addAction('Detach Current Tab')
-
-        self._menu.addSeparator()
-
-        self._menu.addAction('Copy Link')
-        self._menu.addAction('Copy Image')
-        self._menu.addAction('Copy Image Location')
-        self._menu.addAction('Save Link...')
-        self._menu.addAction('Save Image...')
-
-        self._menu.addSeparator()
-
-        self._menu.addAction('Cut')
-        self._menu.addAction('Copy')
-        self._menu.addAction('Paste')
-
-        self._menu.addSeparator()
-
-        self._menu.addAction('Go Back')
-        self._menu.addAction('Go Forward')
-
-        self._menu.addSeparator()
-
-        self._menu.addAction('Undo')
-        self._menu.addAction('Redo')
-
-        self._menu.addSeparator()
-
-        self._menu.addAction('Reload')
-        self._menu.addAction('Force Reload')
-        self._menu.addAction('Stop')
-        self._menu.addAction('Stop All')
-
-        self._menu.addSeparator()
-
-        self._menu.addAction('Save Page')
-        self._menu.addAction('Save Page as...')
-
-        self._menu.addSeparator()
-
-        self._menu.addAction('Bookmark Link')
-        self._menu.addAction('Bookmark Page')
-
-        self._menu.addSeparator()
-
-        self._menu.addAction('Mute')
-        self._menu.addAction('Print')
-        self._menu.addAction('Screenshot')
-
-        self._menu.addSeparator()
-
-        self._menu.addAction('Inspect Element')
-
-    def open_window(self, win_id=None, target=usertypes.ClickTarget.normal):
+    def common(self, method=None):
         raise NotImplementedError
 
-    def duplicate_window(self, win_id, target=usertypes.ClickTarget.normal):
+    def open(self, method=None):
         raise NotImplementedError
 
-    def open_tab(self, tab_id=None, target=usertypes.ClickTarget.normal):
+    def duplicate(self, method=None):
         raise NotImplementedError
 
-    def duplicate_tab(self, tab_id, target=usertypes.ClickTarget.normal):
+    def close(self, method=None):
         raise NotImplementedError
 
-    def copy_link(self, link):
+    def move(self, method=None):
         raise NotImplementedError
 
-    def copy_image(self, image):
+    def link(self, method=None):
         raise NotImplementedError
 
-    def copy_image_link(self, url):
+    def clipboard(self, method=None):
         raise NotImplementedError
 
-    def save_link(self, link):
+    def history(self, method=None):
         raise NotImplementedError
 
-    def save_page(self, page):
+    def stack(self, method=None):
         raise NotImplementedError
 
-    def bookmark_page(self, url):
+    def loading(self, method=None):
         raise NotImplementedError
 
-    def back(self):
+    def page(self, method=None):
         raise NotImplementedError
 
-    def forward(self):
+    def bookmark(self, method=None):
         raise NotImplementedError
 
-    def stop(self, all=False):
-        raise NotImplementedError
-
-    def reload(self, bypass_cache=False):
-        raise NotImplementedError
-
-    def move(self, win_id=None, tab_id=None):
-        raise NotImplementedError
-
-    def close(self, win_id=None, tab_id=None):
-        raise NotImplementedError
-
-    def pin(self):
-        raise NotImplementedError
-
-    def cut(self, text):
-        raise NotImplementedError
-
-    def copy(self, text):
-        raise NotImplementedError
-
-    def paste(self, text):
-        raise NotImplementedError
-
-    def undo(self):
-        raise NotImplementedError
-
-    def redo(self):
-        raise NotImplementedError
-
-    def inspect(self, element):
-        raise NotImplementedError
-
-    def search(self, pattern):
-        raise NotImplementedError
-
-    def screenshot(self, context):
-        raise NotImplementedError
-
-    def mute(self):
-        raise NotImplementedError
-
-    def print(self):
+    def extra(self, method=None):
         raise NotImplementedError
 
 
