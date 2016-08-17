@@ -1,6 +1,6 @@
 # vim: ft=python fileencoding=utf-8 sts=4 sw=4 et:
 
-# Copyright 2015-2016 Florian Bruhin (The Compiler) <mail@qutebrowser.org>
+# Copyright 2016 Florian Bruhin (The Compiler) <mail@qutebrowser.org>
 #
 # This file is part of qutebrowser.
 #
@@ -17,30 +17,14 @@
 # You should have received a copy of the GNU General Public License
 # along with qutebrowser.  If not, see <http://www.gnu.org/licenses/>.
 
-import textwrap
-
-import pytest
-
 import pytest_bdd as bdd
-bdd.scenarios('hints.feature')
+bdd.scenarios('invoke.feature')
 
 
-@pytest.fixture(autouse=True)
-def set_up_word_hints(tmpdir, quteproc):
-    dict_file = tmpdir / 'dict'
-    dict_file.write(textwrap.dedent("""
-        one
-        two
-        three
-        four
-        five
-        six
-        seven
-        eight
-        nine
-        ten
-        eleven
-        twelve
-        thirteen
-    """))
-    quteproc.set_setting('hints', 'dictionary', str(dict_file))
+@bdd.when(bdd.parsers.parse("I spawn a new window"))
+def invoke_with(quteproc):
+    """Spawn a new window via IPC call."""
+    quteproc.log_summary("Create a new window")
+    quteproc.send_ipc([], target_arg='window')
+    quteproc.wait_for(category='init', module='app',
+                      function='_open_startpage', message='Opening startpage')

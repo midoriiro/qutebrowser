@@ -230,8 +230,10 @@ def data(readonly=False):
             ('new-instance-open-target.window',
              SettingValue(typ.String(
                  valid_values=typ.ValidValues(
-                     ('last-opened', "Open new tabs in the last opened "
-                                     "window."),
+                     ('first-opened', "Open new tabs in the first (oldest) "
+                                      "opened window."),
+                     ('last-opened', "Open new tabs in the last (newest) "
+                                     "opened window."),
                      ('last-focused', "Open new tabs in the most recently "
                                       "focused window."),
                      ('last-visible', "Open new tabs in the most recently "
@@ -314,7 +316,8 @@ def data(readonly=False):
 
             ('user-stylesheet',
              SettingValue(typ.UserStyleSheet(none_ok=True),
-                          '::-webkit-scrollbar { width: 0px; height: 0px; }',
+                          'html > ::-webkit-scrollbar { width: 0px; '
+                          'height: 0px; }',
                           backends=[usertypes.Backend.QtWebKit]),
              "User stylesheet to use (absolute filename, filename relative to "
              "the config directory or CSS string). Will expand environment "
@@ -935,9 +938,21 @@ def data(readonly=False):
              "The dictionary file to be used by the word hints."),
 
             ('auto-follow',
-             SettingValue(typ.Bool(), 'true'),
-             "Follow a hint immediately when the hint text is completely "
-             "matched."),
+             SettingValue(typ.String(
+                 valid_values=typ.ValidValues(
+                     ('always', "Auto-follow whenever there is only a single "
+                      "hint on a page."),
+                     ('unique-match', "Auto-follow whenever there is a unique "
+                      "non-empty match in either the hint string (word mode) "
+                      "or filter (number mode)."),
+                     ('full-match', "Follow the hint when the user typed the "
+                      "whole hint (letter, word or number mode) or the "
+                      "element's text (only in number mode)."),
+                     ('never', "The user will always need to press Enter to "
+                      "follow a hint."),
+                 )), 'unique-match'),
+             "Controls when a hint can be automatically followed without the "
+             "user pressing Enter."),
 
             ('auto-follow-timeout',
              SettingValue(typ.Int(), '0'),
@@ -1523,12 +1538,12 @@ KEY_DATA = collections.OrderedDict([
         ('yank domain -s', ['yD']),
         ('yank pretty-url', ['yp']),
         ('yank pretty-url -s', ['yP']),
-        ('open {clipboard}', ['pp']),
-        ('open {primary}', ['pP']),
-        ('open -t {clipboard}', ['Pp']),
-        ('open -t {primary}', ['PP']),
-        ('open -w {clipboard}', ['wp']),
-        ('open -w {primary}', ['wP']),
+        ('open -- {clipboard}', ['pp']),
+        ('open -- {primary}', ['pP']),
+        ('open -t -- {clipboard}', ['Pp']),
+        ('open -t -- {primary}', ['PP']),
+        ('open -w -- {clipboard}', ['wp']),
+        ('open -w -- {primary}', ['wP']),
         ('quickmark-save', ['m']),
         ('set-cmd-text -s :quickmark-load', ['b']),
         ('set-cmd-text -s :quickmark-load -t', ['B']),
@@ -1585,7 +1600,7 @@ KEY_DATA = collections.OrderedDict([
 
     ('insert', collections.OrderedDict([
         ('open-editor', ['<Ctrl-E>']),
-        ('paste-primary', ['<Shift-Ins>']),
+        ('insert-text {primary}', ['<Shift-Ins>']),
     ])),
 
     ('hint', collections.OrderedDict([
@@ -1602,6 +1617,8 @@ KEY_DATA = collections.OrderedDict([
         ('command-history-next', ['<Ctrl-N>']),
         ('completion-item-focus prev', ['<Shift-Tab>', '<Up>']),
         ('completion-item-focus next', ['<Tab>', '<Down>']),
+        ('completion-item-focus next-category', ['<Ctrl-Tab>']),
+        ('completion-item-focus prev-category', ['<Ctrl-Shift-Tab>']),
         ('completion-item-del', ['<Ctrl-D>']),
         ('command-accept', RETURN_KEYS),
     ])),
@@ -1698,11 +1715,18 @@ CHANGED_KEY_COMMANDS = [
     (re.compile(r'^yank-selected -p'), r'yank selection -s'),
     (re.compile(r'^yank-selected'), r'yank selection'),
 
-    (re.compile(r'^paste$'), r'open {clipboard}'),
-    (re.compile(r'^paste -([twb])$'), r'open -\1 {clipboard}'),
-    (re.compile(r'^paste -([twb])s$'), r'open -\1 {primary}'),
-    (re.compile(r'^paste -s([twb])$'), r'open -\1 {primary}'),
+    (re.compile(r'^paste$'), r'open -- {clipboard}'),
+    (re.compile(r'^paste -([twb])$'), r'open -\1 -- {clipboard}'),
+    (re.compile(r'^paste -([twb])s$'), r'open -\1 -- {primary}'),
+    (re.compile(r'^paste -s([twb])$'), r'open -\1 -- {primary}'),
 
     (re.compile(r'^completion-item-next'), r'completion-item-focus next'),
     (re.compile(r'^completion-item-prev'), r'completion-item-focus prev'),
+
+    (re.compile(r'^open {clipboard}$'), r'open -- {clipboard}'),
+    (re.compile(r'^open -([twb]) {clipboard}$'), r'open -\1 -- {clipboard}'),
+    (re.compile(r'^open {primary}$'), r'open -- {primary}'),
+    (re.compile(r'^open -([twb]) {primary}$'), r'open -\1 -- {primary}'),
+
+    (re.compile(r'^paste-primary$'), r'insert-text {primary}'),
 ]
