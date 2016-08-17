@@ -491,6 +491,92 @@ class WebKitHistory(browsertab.AbstractHistory):
                     self._tab.scroller.to_point, cur_data['scroll-pos']))
 
 
+class WebKitContextMenu(browsertab.AbstractContextMenu):
+
+    """QtWebKit implementations related to contextual menu."""
+
+    def open_window(self, win_id=None, target=usertypes.ClickTarget.normal):
+        pass
+
+    def duplicate_window(self, win_id, target=usertypes.ClickTarget.normal):
+        pass
+
+    def open_tab(self, tab_id=None, target=usertypes.ClickTarget.normal):
+        pass
+
+    def duplicate_tab(self, tab_id, target=usertypes.ClickTarget.normal):
+        pass
+
+    def copy_link(self, link):
+        pass
+
+    def copy_image(self, image):
+        pass
+
+    def copy_image_link(self, url):
+        pass
+
+    def save_link(self, link):
+        pass
+
+    def save_page(self, page):
+        pass
+
+    def bookmark_page(self, url):
+        pass
+
+    def back(self):
+        pass
+
+    def forward(self):
+        pass
+
+    def stop(self, all=False):
+        pass
+
+    def reload(self, bypass_cache=False):
+        pass
+
+    def move(self, win_id=None, tab_id=None):
+        pass
+
+    def close(self, win_id=None, tab_id=None):
+        pass
+
+    def pin(self):
+        pass
+
+    def cut(self, text):
+        pass
+
+    def copy(self, text):
+        pass
+
+    def paste(self, text):
+        pass
+
+    def undo(self):
+        pass
+
+    def redo(self):
+        pass
+
+    def inspect(self, element):
+        pass
+
+    def search(self, pattern):
+        pass
+
+    def screenshot(self, context):
+        pass
+
+    def mute(self):
+        pass
+
+    def print(self):
+        pass
+
+
 class WebKitTab(browsertab.AbstractTab):
 
     """A QtWebKit tab in the browser."""
@@ -505,6 +591,7 @@ class WebKitTab(browsertab.AbstractTab):
         self.zoom = WebKitZoom(win_id=win_id, parent=self)
         self.search = WebKitSearch(parent=self)
         self.printing = WebKitPrinting()
+        self.menu = WebKitContextMenu(self)
         self._set_widget(widget)
         self._connect_signals()
         self.zoom.set_default()
