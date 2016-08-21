@@ -351,7 +351,8 @@ class WebView(QWebView):
 
     def contextMenuEvent(self, e):
         """Save a reference to the context menu so we can close it."""
-        menu = self.page().createStandardContextMenu()
+        #menu = self.page().createStandardContextMenu()
+        menu = self.tab.menu.createContextMenu()
         self.shutting_down.connect(menu.close)
         modeman.instance(self.win_id).entered.connect(menu.close)
         menu.exec_(e.globalPos())
