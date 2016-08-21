@@ -447,9 +447,67 @@ class AbstractContextMenu:
         self._widget = None
         self._manager = contextmenu.ContextMenu()
 
+        self._trigger_dict = {
+            'load_status': None,
+            'link': None,
+            'selection': None,
+            'tabs': None,
+        }
+
     def _init_widget(self, widget):
         self._widget = widget
         self._manager._init_menu(widget)
+
+        self._widget.selectionChanged.connect(self._on_selection_changed)
+        self._tab.link_hovered.connect(self._on_link_hovered)
+
+    def createContextMenu(self):
+        actions = self._manager._action_dict
+
+        for section in actions.keys():
+            for k in actions[section].keys():
+                action = actions[section][k]
+
+                try:
+                    trigger = action['trigger']
+                    object = action['object']
+                    visible = False
+
+                    if trigger == contextmenu.Trigger.has_selection:
+                        visible = self._trigger_dict['selection'] is not None
+                    if trigger == contextmenu.Trigger.has_link:
+                        visible = self._trigger_dict['link'] is not None
+                        log.webview.debug(visible)
+                    if trigger == contextmenu.Trigger.can_go_back:
+                        visible = self._tab.history.can_go_back()
+                    if trigger == contextmenu.Trigger.can_go_forward:
+                        visible = self._tab.history.can_go_forward()
+
+                    object.setVisible(visible)
+                except:
+                    pass
+
+        return self._manager._menu
+
+    @pyqtSlot()
+    def _on_selection_changed(self):
+        selection = None
+        text = self._widget.selectedText()
+        html = self._widget.selectedHtml()
+
+        if text:
+            selection = None if not text else text
+            log.webview.debug('text selection : {}'.format(text))
+        elif html:
+            selection = None if not html else html
+            log.webview.debug('html selection : {}'.format(html))
+
+        self._trigger_dict['selection'] = selection
+
+    @pyqtSlot(str)
+    def _on_link_hovered(self, link):
+        self._trigger_dict['link'] = None if not link else link
+        log.webview.debug('{}'.format(self._trigger_dict['link']))
 
     def common(self, method=None):
         raise NotImplementedError
