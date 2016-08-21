@@ -300,15 +300,17 @@ class ContextMenu:
                 action = QAction(self._menu)
 
                 try:
-                    action.setCheckable(k['checkable'])
-                    action.setChecked(k['checked'])
+                    action.setCheckable(
+                        self._action_dict[section][k]['checkable']
+                    )
+                    action.setChecked(self._action_dict[section][k]['checked'])
                 except:
                     pass
-                else:
-                    action.setText(k['text'])
-                    action.setIcon(k['icon'])
 
-                    k['object'] = action
+                    action.setText(self._action_dict[section][k]['text'])
+                    #action.setIcon(self._action_dict[section][k]['icon']) TODO
+
+                self._action_dict[section][k]['object'] = action
 
                 self._menu.addAction(action)
 
