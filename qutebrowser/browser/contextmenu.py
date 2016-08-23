@@ -10,6 +10,7 @@ Trigger = usertypes.enum('Trigger', [
     'load_status',
     'has_selection',
     'has_link',
+    'has_image_link',
     'has_tabs',
     'can_insert',
     'can_go_back',
@@ -184,7 +185,7 @@ class ContextMenu:
         self._action_dict['link']['copy_image_link'] = {
             'text': 'Copy Image Link',
             'icon': None,
-            'trigger': Trigger.has_link
+            'trigger': Trigger.has_image_link
         }
         self._action_dict['link']['save_link'] = {
             'text': 'Save Link...',
@@ -194,7 +195,7 @@ class ContextMenu:
         self._action_dict['link']['save_image'] = {
             'text': 'Save Image...',
             'icon': None,
-            'trigger': Trigger.has_link
+            'trigger': Trigger.has_image_link
         }
 
         self._action_dict['clipboard'] = collections.OrderedDict()
