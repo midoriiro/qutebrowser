@@ -4,7 +4,7 @@ import collections
 
 from PyQt5.QtWidgets import QMenu, QAction, QActionGroup
 
-from qutebrowser.utils import usertypes, log
+from qutebrowser.utils import usertypes
 
 Trigger = usertypes.enum('Trigger', [
     'load_status',
@@ -306,7 +306,7 @@ class ContextMenu:
                     action.setChecked(self._action_dict[section][k]['checked'])
                 except:
                     pass
-
+                finally:
                     action.setText(self._action_dict[section][k]['text'])
                     #action.setIcon(self._action_dict[section][k]['icon']) TODO
 
