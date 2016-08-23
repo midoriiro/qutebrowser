@@ -469,39 +469,42 @@ class AbstractContextMenu:
         for section in actions.keys():
             for k in actions[section].keys():
                 action = actions[section][k]
+                object = action['object']
 
-                try:
-                    trigger = action['trigger']
-                    object = action['object']
-                    visible = False
+                triggered = self._handle_trigger(action)
 
-                    if isinstance(trigger, dict):
-                        when = trigger['when']
-                        then = trigger['then']
-
-                        if when is contextmenu.Trigger.load_status:
-                            expected = self._trigger_dict['load_status']
-
-                            for status in then:
-                                visible = expected == status.name
-                                if visible:
-                                    break
-
-                            log.contextmenu.debug('visible {}'.format(visible))
-                    elif trigger == contextmenu.Trigger.has_selection:
-                        visible = self._trigger_dict['selection'] is not None
-                    elif trigger == contextmenu.Trigger.has_link:
-                        visible = self._trigger_dict['link'] is not None
-                    elif trigger == contextmenu.Trigger.can_go_back:
-                        visible = self._tab.history.can_go_back()
-                    elif trigger == contextmenu.Trigger.can_go_forward:
-                        visible = self._tab.history.can_go_forward()
-
-                    object.setVisible(visible)
-                except:
-                    pass
+                object.setVisible(triggered)
 
         return self._manager._menu
+
+    def _handle_trigger(self, action):
+        try:
+            trigger = action['trigger']
+            triggered = False
+
+            if isinstance(trigger, dict):
+                when = trigger['when']
+                then = trigger['then']
+
+                if when is contextmenu.Trigger.load_status:
+                    expected = self._trigger_dict['load_status']
+
+                    for status in then:
+                        triggered = expected == status.name
+                        if triggered:
+                            break
+            elif trigger == contextmenu.Trigger.has_selection:
+                triggered = self._trigger_dict['selection'] is not None
+            elif trigger == contextmenu.Trigger.has_link:
+                triggered = self._trigger_dict['link'] is not None
+            elif trigger == contextmenu.Trigger.can_go_back:
+                triggered = self._tab.history.can_go_back()
+            elif trigger == contextmenu.Trigger.can_go_forward:
+                triggered = self._tab.history.can_go_forward()
+
+            return triggered
+        except:
+            return True
 
     @pyqtSlot(str)
     def _on_load_status_changed(self, status):
