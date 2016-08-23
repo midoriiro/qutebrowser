@@ -4,9 +4,9 @@ import collections
 
 from PyQt5.QtWidgets import QMenu, QAction, QActionGroup
 
-from qutebrowser.utils import usertypes as ut
+from qutebrowser.utils import usertypes
 
-Trigger = ut.enum('Trigger', [
+Trigger = usertypes.enum('Trigger', [
     'load_status',
     'has_selection',
     'has_link',
@@ -59,7 +59,10 @@ class ContextMenu:
             'icon': None,
             'trigger': {
                 'when': Trigger.load_status,
-                'then': ut.LoadStatus.success or ut.LoadStatus.success_https
+                'then': [
+                    usertypes.LoadStatus.success,
+                    usertypes.LoadStatus.success_https
+                ]
             }
         }
 
@@ -246,7 +249,10 @@ class ContextMenu:
             'icon': None,
             'trigger': {
                 'when': Trigger.load_status,
-                'then': ut.LoadStatus.success or ut.LoadStatus.success_https
+                'then': [
+                    usertypes.LoadStatus.success,
+                    usertypes.LoadStatus.success_https
+                ]
             }
         }
         self._action_dict['loading']['force_reload'] = {
@@ -254,7 +260,10 @@ class ContextMenu:
             'icon': None,
             'trigger': {
                 'when': Trigger.load_status,
-                'then': ut.LoadStatus.success or ut.LoadStatus.success_https
+                'then': [
+                    usertypes.LoadStatus.success,
+                    usertypes.LoadStatus.success_https
+                ]
             }
         }
         self._action_dict['loading']['stop'] = {
@@ -262,7 +271,9 @@ class ContextMenu:
             'icon': None,
             'trigger': {
                 'when': Trigger.load_status,
-                'then': ut.LoadStatus.loading
+                'then': [
+                    usertypes.LoadStatus.loading
+                ]
             }
         }
         self._action_dict['loading']['stop_all'] = {
@@ -270,7 +281,9 @@ class ContextMenu:
             'icon': None,
             'trigger': {
                 'when': Trigger.load_status,
-                'then': ut.LoadStatus.loading
+                'then': [
+                    usertypes.LoadStatus.loading
+                ]
             }
         }
 
@@ -280,7 +293,10 @@ class ContextMenu:
             'icon': None,
             'trigger': {
                 'when': Trigger.load_status,
-                'then': ut.LoadStatus.success or ut.LoadStatus.success_https
+                'then': [
+                    usertypes.LoadStatus.success,
+                    usertypes.LoadStatus.success_https
+                ]
             }
         }
         self._action_dict['page']['save_as'] = {
@@ -288,7 +304,10 @@ class ContextMenu:
             'icon': None,
             'trigger': {
                 'when': Trigger.load_status,
-                'then': ut.LoadStatus.success or ut.LoadStatus.success_https
+                'then': [
+                    usertypes.LoadStatus.success,
+                    usertypes.LoadStatus.success_https
+                ]
             }
         }
 
@@ -303,7 +322,10 @@ class ContextMenu:
             'icon': None,
             'trigger': {
                 'when': Trigger.load_status,
-                'then': ut.LoadStatus.success or ut.LoadStatus.success_https
+                'then': [
+                    usertypes.LoadStatus.success,
+                    usertypes.LoadStatus.success_https
+                ]
             }
         }
 
