@@ -451,6 +451,7 @@ class AbstractContextMenu:
         self._trigger_dict = {
             'load_status': None,
             'link': None,
+            'image': None,
             'selection': None,
             'tabs': None,
         }
@@ -528,10 +529,49 @@ class AbstractContextMenu:
 
     @pyqtSlot(str)
     def _on_link_hovered(self, link):
-        self._trigger_dict['link'] = None if not link else link
-        log.contextmenu.debug('link hovered : {}'.format(
-            self._trigger_dict['link'])
+        try:
+            url = urlutils.fuzzy_url(link)
+        except urlutils.InvalidUrlError:
+            self._trigger_dict['image'] = None
+            self._trigger_dict['link'] = None
+            return
+
+        element_img = self._widget.page().mainFrame().findFirstElement(
+            "img[src='{}']".format(url.path(QUrl.FullyEncoded))
         )
+
+        element_a = self._widget.page().mainFrame().findFirstElement(
+            "a[href*='{}']".format(url.path(QUrl.FullyEncoded))
+        )
+
+        if not element_a.isNull() and element_img.isNull:
+            element_img = element_a.findFirst('img')
+
+        if not element_a.isNull():
+            self._trigger_dict['link'] = url.toString(QUrl.FullyEncoded)
+
+            log.contextmenu.debug('link hovered : {}'.format(
+                self._trigger_dict['link'])
+            )
+
+        if not element_img.isNull():
+            try:
+                url = urlutils.fuzzy_url(element_img.attribute('src'))
+            except urlutils.InvalidUrlError:
+                log.contextmenu.error('image link is not valid : {}'.format(
+                    url.toDisplayString()
+                ))
+
+                return
+
+            self._trigger_dict['image'] = {
+                'url': url,
+                'element': element_img
+            }
+
+            log.contextmenu.debug('image link hovered : {}'.format(
+                self._trigger_dict['link'])
+            )
 
     def common(self, method=None):
         raise NotImplementedError
