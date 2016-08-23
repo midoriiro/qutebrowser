@@ -128,7 +128,7 @@ save = logging.getLogger('save')
 message = logging.getLogger('message')
 config = logging.getLogger('config')
 sessions = logging.getLogger('sessions')
-
+contextmenu = logging.getLogger('contextmenu')
 
 ram_handler = None
 
