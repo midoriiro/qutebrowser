@@ -438,6 +438,7 @@ class AbstractContextMenu:
     Attributes:
         _widget: The underlying WebView widget.
         _manager: A manager for contextual menu.
+        _trigger_dict: A dict of related values to actions triggers
 
     """
 
@@ -458,6 +459,7 @@ class AbstractContextMenu:
         self._widget = widget
         self._manager._init_menu(widget)
 
+        self._tab.load_status_changed.connect(self._on_load_status_changed)
         self._widget.selectionChanged.connect(self._on_selection_changed)
         self._tab.link_hovered.connect(self._on_link_hovered)
 
@@ -473,14 +475,26 @@ class AbstractContextMenu:
                     object = action['object']
                     visible = False
 
-                    if trigger == contextmenu.Trigger.has_selection:
+                    if isinstance(trigger, dict):
+                        when = trigger['when']
+                        then = trigger['then']
+
+                        if when is contextmenu.Trigger.load_status:
+                            expected = self._trigger_dict['load_status']
+
+                            for status in then:
+                                visible = expected == status.name
+                                if visible:
+                                    break
+
+                            log.contextmenu.debug('visible {}'.format(visible))
+                    elif trigger == contextmenu.Trigger.has_selection:
                         visible = self._trigger_dict['selection'] is not None
-                    if trigger == contextmenu.Trigger.has_link:
+                    elif trigger == contextmenu.Trigger.has_link:
                         visible = self._trigger_dict['link'] is not None
-                        log.webview.debug(visible)
-                    if trigger == contextmenu.Trigger.can_go_back:
+                    elif trigger == contextmenu.Trigger.can_go_back:
                         visible = self._tab.history.can_go_back()
-                    if trigger == contextmenu.Trigger.can_go_forward:
+                    elif trigger == contextmenu.Trigger.can_go_forward:
                         visible = self._tab.history.can_go_forward()
 
                     object.setVisible(visible)
@@ -488,6 +502,11 @@ class AbstractContextMenu:
                     pass
 
         return self._manager._menu
+
+    @pyqtSlot(str)
+    def _on_load_status_changed(self, status):
+        self._trigger_dict['load_status'] = None if not status else status
+        log.contextmenu.debug('load status : {}'.format(status))
 
     @pyqtSlot()
     def _on_selection_changed(self):
@@ -497,17 +516,19 @@ class AbstractContextMenu:
 
         if text:
             selection = None if not text else text
-            log.webview.debug('text selection : {}'.format(text))
+            log.contextmenu.debug('text selection : {}'.format(text))
         elif html:
             selection = None if not html else html
-            log.webview.debug('html selection : {}'.format(html))
+            log.contextmenu.debug('html selection : {}'.format(html))
 
         self._trigger_dict['selection'] = selection
 
     @pyqtSlot(str)
     def _on_link_hovered(self, link):
         self._trigger_dict['link'] = None if not link else link
-        log.webview.debug('{}'.format(self._trigger_dict['link']))
+        log.contextmenu.debug('link hovered : {}'.format(
+            self._trigger_dict['link'])
+        )
 
     def common(self, method=None):
         raise NotImplementedError
