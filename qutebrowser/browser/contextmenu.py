@@ -4,9 +4,9 @@ import collections
 
 from PyQt5.QtWidgets import QMenu, QAction, QActionGroup
 
-from qutebrowser.utils import usertypes
+from qutebrowser.utils import usertypes as ut
 
-Trigger = usertypes.enum('Trigger', [
+Trigger = ut.enum('Trigger', [
     'load_status',
     'has_selection',
     'has_link',
@@ -57,7 +57,10 @@ class ContextMenu:
         self._action_dict['common']['screenshot'] = {
             'text': 'Screenshot',
             'icon': None,
-            'trigger': Trigger.load_status
+            'trigger': {
+                'when': Trigger.load_status,
+                'then': ut.LoadStatus.success or ut.LoadStatus.success_https
+            }
         }
 
         self._action_dict['search'] = collections.OrderedDict()
@@ -241,34 +244,52 @@ class ContextMenu:
         self._action_dict['loading']['reload'] = {
             'text': 'Reload',
             'icon': None,
-            'trigger': Trigger.load_status
+            'trigger': {
+                'when': Trigger.load_status,
+                'then': ut.LoadStatus.success or ut.LoadStatus.success_https
+            }
         }
         self._action_dict['loading']['force_reload'] = {
             'text': 'Force Reload',
             'icon': None,
-            'trigger': Trigger.load_status
+            'trigger': {
+                'when': Trigger.load_status,
+                'then': ut.LoadStatus.success or ut.LoadStatus.success_https
+            }
         }
         self._action_dict['loading']['stop'] = {
             'text': 'Stop',
             'icon': None,
-            'trigger': Trigger.load_status
+            'trigger': {
+                'when': Trigger.load_status,
+                'then': ut.LoadStatus.loading
+            }
         }
         self._action_dict['loading']['stop_all'] = {
             'text': 'Stop All',
             'icon': None,
-            'trigger': Trigger.load_status
+            'trigger': {
+                'when': Trigger.load_status,
+                'then': ut.LoadStatus.loading
+            }
         }
 
         self._action_dict['page'] = collections.OrderedDict()
         self._action_dict['page']['save'] = {
             'text': 'Save Page',
             'icon': None,
-            'trigger': Trigger.load_status
+            'trigger': {
+                'when': Trigger.load_status,
+                'then': ut.LoadStatus.success or ut.LoadStatus.success_https
+            }
         }
         self._action_dict['page']['save_as'] = {
             'text': 'Save Page as...',
             'icon': None,
-            'trigger': Trigger.load_status
+            'trigger': {
+                'when': Trigger.load_status,
+                'then': ut.LoadStatus.success or ut.LoadStatus.success_https
+            }
         }
 
         self._action_dict['bookmark'] = collections.OrderedDict()
@@ -280,7 +301,10 @@ class ContextMenu:
         self._action_dict['bookmark']['page'] = {
             'text': 'Bookmark Page',
             'icon': None,
-            'trigger': Trigger.load_status
+            'trigger': {
+                'when': Trigger.load_status,
+                'then': ut.LoadStatus.success or ut.LoadStatus.success_https
+            }
         }
 
         self._action_dict['extra'] = collections.OrderedDict()
