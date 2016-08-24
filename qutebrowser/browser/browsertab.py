@@ -465,6 +465,8 @@ class AbstractContextMenu:
         self._tab.link_hovered.connect(self._on_link_hovered)
 
     def createContextMenu(self):
+        self._tab.find_all_elements('img:hover', self._on_image_hovered)
+
         actions = self._manager._action_dict
 
         for section in actions.keys():
@@ -559,9 +561,9 @@ class AbstractContextMenu:
         if not element_img.isNull():
             try:
                 url = urlutils.fuzzy_url(element_img.attribute('src'))
-            except urlutils.InvalidUrlError:
+            except urlutils.InvalidUrlError as e:
                 log.contextmenu.error('image link is not valid : {}'.format(
-                    url.toDisplayString()
+                    e.url
                 ))
 
                 return
@@ -572,7 +574,36 @@ class AbstractContextMenu:
             }
 
             log.contextmenu.debug('image link hovered : {}'.format(
-                self._trigger_dict['link'])
+                self._trigger_dict['image'])
+            )
+
+    def _on_image_hovered(self, elements):
+        if elements is None or self._trigger_dict['image'] is not None:
+            return
+
+        if len(elements) > 0:
+            element = elements[0]
+
+            try:
+                url = urlutils.fuzzy_url(element['src'])
+            except KeyError:
+                log.contextmenu.error('image has not src attribute')
+
+                return
+            except urlutils.InvalidUrlError as e:
+                log.contextmenu.error('image link is not valid : {}'.format(
+                    e.url
+                ))
+
+                return
+
+            self._trigger_dict['image'] = {
+                'url': url,
+                'element': element
+            }
+
+            log.contextmenu.debug('image link hovered : {}'.format(
+                self._trigger_dict['image'])
             )
 
     def common(self, method=None):
