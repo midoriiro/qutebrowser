@@ -180,7 +180,7 @@ class ContextMenu:
         self._action_dict['link']['copy_image'] = {
             'text': 'Copy Image',
             'icon': None,
-            'trigger': Trigger.has_link
+            'trigger': Trigger.has_image_link
         }
         self._action_dict['link']['copy_image_link'] = {
             'text': 'Copy Image Link',
