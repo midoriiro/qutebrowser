@@ -498,6 +498,8 @@ class AbstractContextMenu:
                 triggered = self._trigger_dict['selection'] is not None
             elif trigger == contextmenu.Trigger.has_link:
                 triggered = self._trigger_dict['link'] is not None
+            elif trigger == contextmenu.Trigger.has_image_link:
+                triggered = self._trigger_dict['image'] is not None
             elif trigger == contextmenu.Trigger.can_go_back:
                 triggered = self._tab.history.can_go_back()
             elif trigger == contextmenu.Trigger.can_go_forward:
